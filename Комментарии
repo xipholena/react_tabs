@@ -1,0 +1,72 @@
+const App = () => (
+  <div>
+    <h1>React tabs</h1>
+    <Tabs 
+      tabs={preparedTabs}
+      defaultIndex={0} //по заданию
+    />
+  </div>
+);
+
+=====================
+export class Tabs extends React.Component {
+  state = {
+   // selectedTabIndex: свойство объекта будет добавлено для задания класса active активной вкладке
+    selectedTabContent: this.props.tabs[0].content, //вкладка №1 открытая при загрузке
+  }
+
+  onTabSelected = (index, content) => {
+    this.setState({
+      selectedTabIndex: index, //для задания класса active активной вкладке
+      selectedTabContent: content,
+    });
+  };
+
+  render() {
+    const { tabs } = this.props;
+    const { selectedTabIndex, selectedTabContent } = this.state;
+    return (
+      <div>
+        <ul>
+            {tabs.map(tab => (
+              <li
+                className={
+                  ClassNames('tab', { active: selectedTabIndex === tab.id })
+                }
+                key={tab.id}
+              >
+                <Tab 
+                  className="tab__button"
+                  onTabSelected={this.onTabSelected}
+                  id={tab.id}
+                  content={tab.content}
+                  title={tab.title}
+                />
+              </li>
+            ))}
+          </ul>
+          <div className="content">{selectedTabContent}</div>
+      </div>
+    )
+  }
+}
+==============================================================
+export class Tab extends React.Component {
+  render() {
+    const {id, content, title, onTabSelected} = this.props;
+    return(
+      <>
+        <button
+          /*до разделения компонента было this.onTabSelected(this.state.id, this.state.content), 
+          затем => this.props.onTabSelected(this.props.id, this.props.content),
+          затем, после деструктуризации => onTabSelected(id, content)
+          */
+          onClick={() => onTabSelected(id, content)} 
+          type="button"
+        >
+          {title}
+        </button>
+      </>
+    )
+  }
+}
